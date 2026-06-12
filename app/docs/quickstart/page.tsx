@@ -1,46 +1,50 @@
+"use client"
 import Link from "next/link";
-import type { Metadata } from "next";
+import { Breadcrumb, Callout, EditLink } from "../architecture/page";
 import CodeBlock from "../CodeBlock";
-
-export const metadata: Metadata = {
-  title: "Quickstart — TrueNorth Docs",
-  description: "Get started with TrueNorth in under 5 minutes.",
-};
-
-const steps = [
-  {
-    title: "Install TrueNorth",
-    content: (
-      <div className="space-y-3">
-        <p className="text-sm text-[#8B95A3]">Install via pip (Python 3.9+):</p>
-        <CodeBlock lang="bash" code={`pip install truenorth-framework`} />
-        <p className="text-sm text-[#8B95A3]">Or Node.js:</p>
-        <CodeBlock lang="bash" code={`npm install truenorth`} />
-        <p className="text-sm text-[#8B95A3]">Or Go:</p>
-        <CodeBlock lang="bash" code={`go get github.com/amareshhebbar/truenorth/sdk`} />
-      </div>
-    ),
-  },
-  {
-    title: "Set your API key",
-    content: (
-      <div className="space-y-3">
-        <p className="text-sm text-[#8B95A3]">TrueNorth works with any OpenAI-compatible provider:</p>
-        <CodeBlock lang="bash" code={`export OPENAI_API_KEY=sk-...
-# or Anthropic
+import { DOCS_CSS } from "../docs.css";
+export default function QuickstartPage() {
+  const STEPS = [
+    {
+      n: "1",
+      title: "Install TrueNorth",
+      content: (
+        <>
+          <p className="doc-p">Install via pip (Python 3.9+):</p>
+          <CodeBlock lang="bash" code={`pip install truenorth-framework`} />
+          <p className="doc-p">Or Node.js:</p>
+          <CodeBlock lang="bash" code={`npm install truenorth`} />
+          <p className="doc-p">Or Go:</p>
+          <CodeBlock lang="bash" code={`go get github.com/amareshhebbar/truenorth/sdk`} />
+        </>
+      ),
+    },
+    {
+      n: "2",
+      title: "Set your API key",
+      content: (
+        <>
+          <p className="doc-p">TrueNorth works with any OpenAI-compatible provider:</p>
+          <CodeBlock lang="bash" code={`# OpenAI
+export OPENAI_API_KEY=sk-...
+# Anthropic
 export ANTHROPIC_API_KEY=sk-ant-...
-# or local via Ollama — no API key needed`} />
-      </div>
-    ),
-  },
-  {
-    title: "Create your first schema",
-    content: (
-      <div className="space-y-3">
-        <p className="text-sm text-[#8B95A3]">Create a file called <code className="text-[#A8FF78] text-xs">my_agent.yaml</code>:</p>
-        <CodeBlock
-          lang="yaml"
-          code={`id: my_first_agent
+# Local via Ollama — no key needed`} />
+        </>
+      ),
+    },
+    {
+      n: "3",
+      title: "Create your schema",
+      content: (
+        <>
+          <p className="doc-p">
+            Create <code className="doc-code">my_agent.yaml</code>:
+          </p>
+          <CodeBlock
+            lang="yaml"
+            filename="my_agent.yaml"
+            code={`id: my_first_agent
 persona: "You are a helpful assistant named Alex."
 
 fields:
@@ -58,36 +62,35 @@ fields:
     question: "How can I help you today?"
 
 output_template: inquiry_v1`}
-        />
-      </div>
-    ),
-  },
-  {
-    title: "Run the engine",
-    content: (
-      <div className="space-y-3">
-        <CodeBlock
-          lang="python"
-          code={`from truenorth import Engine, Schema
+          />
+        </>
+      ),
+    },
+    {
+      n: "4",
+      title: "Run the engine",
+      content: (
+        <>
+          <CodeBlock
+            lang="python"
+            filename="main.py"
+            code={`from truenorth import Engine, Schema
 
 schema = Schema.load("my_agent.yaml")
 engine = Engine(schema=schema)
 
-# Create a session
 session = engine.create_session(user_id="user_123")
 
-# Chat loop
 while not session.is_complete:
     user_input = input(f"Agent: {session.last_message}\\nYou: ")
     session = engine.chat(session.id, user_input)
 
-# Get structured output
 print(session.output.json())`}
-        />
-        <p className="text-sm text-[#8B95A3]">Expected output:</p>
-        <CodeBlock
-          lang="json"
-          code={`{
+          />
+          <p className="doc-p">Expected output:</p>
+          <CodeBlock
+            lang="json"
+            code={`{
   "user_name": "Priya",
   "email": "priya@example.com",
   "inquiry": "I need help with my subscription",
@@ -97,77 +100,72 @@ print(session.output.json())`}
     "confidence": 0.94
   }
 }`}
-        />
-      </div>
-    ),
-  },
-];
+          />
+        </>
+      ),
+    },
+  ];
 
-export default function QuickstartPage() {
   return (
-    <article>
-      <nav className="flex items-center gap-2 text-xs text-[#4A5568] mb-8" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-[#00D4AA] transition-colors">TrueNorth</Link>
-        <span>/</span>
-        <Link href="/docs" className="hover:text-[#00D4AA] transition-colors">Docs</Link>
-        <span>/</span>
-        <span className="text-[#8B95A3]">Quickstart</span>
-      </nav>
+    <>
+      <style>{DOCS_CSS}</style>
+      <article className="doc-article">
+        <Breadcrumb items={[{ label: "Docs", href: "/docs" }, { label: "Quickstart" }]} />
 
-      <h1 className="text-4xl font-bold text-[#F0F2F5] mb-4">Quickstart</h1>
-      <p className="text-lg text-[#8B95A3] mb-10 leading-relaxed">
-        From zero to a working AI conversation agent in under 5 minutes.
-      </p>
+        <h1 className="doc-h1">Quickstart</h1>
+        <p className="doc-lead">From zero to a working AI conversation agent in under 5 minutes.</p>
 
-      <div className="space-y-10">
-        {steps.map((step, i) => (
-          <div key={step.title} className="flex gap-6">
-            {/* Step number */}
-            <div className="shrink-0 flex flex-col items-center">
-              <div className="w-9 h-9 rounded-full border-2 border-[#00D4AA] flex items-center justify-center text-sm font-bold text-[#00D4AA]">
-                {i + 1}
+        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {STEPS.map((step, i) => (
+            <div
+              key={i}
+              style={{ display: "flex", gap: "1.5rem", position: "relative" }}
+            >
+              {/* Spine + node */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                <div style={{
+                  width: 34, height: 34, borderRadius: "50%",
+                  border: "2px solid #0DFF9A",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "0.78rem", fontWeight: 700, color: "#0DFF9A",
+                  background: "#080B12", zIndex: 1, flexShrink: 0,
+                }}>
+                  {step.n}
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div style={{ width: 1, flex: 1, background: "#1C2740", margin: "4px 0" }} />
+                )}
               </div>
-              {i < steps.length - 1 && (
-                <div className="w-0.5 flex-1 mt-2 bg-[#1E2329]" />
-              )}
+              {/* Content */}
+              <div style={{ flex: 1, paddingBottom: i < STEPS.length - 1 ? "2rem" : 0, minWidth: 0 }}>
+                <h2 className="doc-h3" style={{ marginTop: "5px", marginBottom: "1rem" }}>{step.title}</h2>
+                {step.content}
+              </div>
             </div>
+          ))}
+        </div>
 
-            {/* Content */}
-            <div className="flex-1 pb-8">
-              <h2 className="text-lg font-semibold text-[#F0F2F5] mb-4">{step.title}</h2>
-              {step.content}
-            </div>
-          </div>
-        ))}
-      </div>
+        <Callout type="info" title="Next steps">
+          Try the <Link href="/playground" className="doc-a">Playground</Link> for a live browser demo, or read about the{" "}
+          <Link href="/docs/architecture" className="doc-a">13-stage engine architecture</Link>.
+        </Callout>
 
-      <div className="callout-info mt-8">
-        <strong className="text-[#00D4AA]">Next steps</strong>
-        <p className="text-sm text-[#8B95A3] mt-1">
-          Now try the <Link href="/playground" className="text-[#00D4AA] hover:underline">Playground</Link> for a live browser demo, or read about the{" "}
-          <Link href="/docs/architecture" className="text-[#00D4AA] hover:underline">13-stage engine architecture</Link>.
-        </p>
-      </div>
+        <div className="doc-page-nav">
+          <Link href="/docs" className="doc-page-nav-link">
+            <span className="doc-page-nav-dir">← Previous</span>
+            <span className="doc-page-nav-label">Introduction</span>
+          </Link>
+          <Link href="/docs/architecture" className="doc-page-nav-link next">
+            <span className="doc-page-nav-dir">Next →</span>
+            <span className="doc-page-nav-label">Architecture</span>
+          </Link>
+        </div>
 
-      <div className="flex gap-4 mt-10 pt-8 border-t border-[#1E2329]">
-        <Link href="/docs" className="text-sm text-[#4A5568] hover:text-[#00D4AA] transition-colors">
-          ← Introduction
-        </Link>
-        <Link href="/docs/architecture" className="ml-auto text-sm text-[#4A5568] hover:text-[#00D4AA] transition-colors">
-          Architecture →
-        </Link>
-      </div>
-
-      <div className="mt-6">
-        <a
-          href="https://github.com/amareshhebbar/TrueNorth/blob/main/docs/quickstart.md"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-[#4A5568] hover:text-[#00D4AA] transition-colors"
-        >
-          Edit this page on GitHub →
-        </a>
-      </div>
-    </article>
+        <div style={{ marginTop: "2rem" }}>
+          <EditLink slug="quickstart" />
+        </div>
+      </article>
+    </>
   );
 }

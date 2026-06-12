@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   description: "What makes TrueNorth different from every other AI conversation framework.",
 };
 
+
 const features = [
   {
     slug: "yaml-engine",

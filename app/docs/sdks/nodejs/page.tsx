@@ -1,45 +1,51 @@
 import CodeBlock from "../../CodeBlock";
+import { Bc, EditLink, PageNav } from "../python/page";
+import SDK_CSS from "../sdk.css"
 
 export default function NodeSDKPage() {
+  const COLOR = "#0DFF9A";
+
   return (
-    <div className="prose-container max-w-none">
-      <nav className="text-xs text-[#4A5568] mb-6 flex items-center gap-2">
-        <a href="/docs" className="hover:text-[#00D4AA] transition-colors">Docs</a>
-        <span>/</span>
-        <a href="/docs/sdks" className="hover:text-[#00D4AA] transition-colors">SDKs</a>
-        <span>/</span>
-        <span className="text-[#00D4AA]">Node.js</span>
-      </nav>
+    <>
+      <style>{SDK_CSS}</style>
+      <article className="sdk-article">
+        <Bc lang="Node.js" langColor={COLOR} slug="nodejs" />
 
-      <div className="flex items-center gap-3 mb-4">
-        <span className="text-xs px-2 py-1 rounded bg-[#00D4AA]/10 text-[#00D4AA] border border-[#00D4AA]/20 font-mono font-bold">NODE.JS</span>
-        <span className="text-xs px-2 py-1 rounded bg-[#3178C6]/10 text-[#3178C6] border border-[#3178C6]/20 font-mono">TypeScript-native</span>
-      </div>
+        <div className="sdk-tags">
+          <span className="sdk-tag" style={{ color: COLOR, background: COLOR+"0D", borderColor: COLOR+"30" }}>Node.js</span>
+          <span className="sdk-tag" style={{ color: "#4D9EFF", background: "#4D9EFF0D", borderColor: "#4D9EFF30" }}>TypeScript-native</span>
+          <span className="sdk-tag-plain">Stable</span>
+        </div>
 
-      <h1 className="text-4xl font-bold text-[#F0F2F5] mb-4">Node.js / TypeScript SDK</h1>
-      <p className="text-[#8B95A3] text-lg mb-8 leading-relaxed">
-        TypeScript-native SDK with full async/await support. Runs on Node.js 18+ and works with Next.js server actions, Express, Fastify, and any Node runtime.
-      </p>
+        <h1 className="sdk-h1">Node.js / TypeScript SDK</h1>
+        <p className="sdk-lead">TypeScript-native SDK with full async/await support. Runs on Node.js 18+ and works with Next.js server actions, Express, Fastify, and any Node runtime.</p>
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4">Installation</h2>
-      <CodeBlock lang="bash" code={`npm install truenorth
+        <h2 className="sdk-h2">Installation</h2>
+        <CodeBlock lang="bash" code={`npm install truenorth
 # or
 yarn add truenorth
 # or
 pnpm add truenorth`} />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Initialize</h2>
-      <CodeBlock lang="typescript" filename="lib/truenorth.ts" code={`import { TrueNorthEngine } from "truenorth";
+        <h2 className="sdk-h2">Initialize</h2>
+        <CodeBlock
+          lang="typescript"
+          filename="lib/truenorth.ts"
+          code={`import { TrueNorthEngine } from "truenorth";
 
 const engine = new TrueNorthEngine({
-  provider: "openai",        // or "anthropic" | "gemini" | "ollama"
+  provider: "openai",        // "openai" | "anthropic" | "gemini" | "ollama"
   model: "gpt-4o-mini",
   apiKey: process.env.OPENAI_API_KEY!,
   compliance: ["dpdp"],      // optional
-});`} />
+});`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Next.js Server Action</h2>
-      <CodeBlock lang="typescript" filename="app/actions.ts" code={`"use server";
+        <h2 className="sdk-h2">Next.js Server Action</h2>
+        <CodeBlock
+          lang="typescript"
+          filename="app/actions.ts"
+          code={`"use server";
 import { engine } from "@/lib/truenorth";
 
 export async function sendMessage(sessionId: string, message: string) {
@@ -51,70 +57,74 @@ export async function sendMessage(sessionId: string, message: string) {
   const response = await session.send(message);
 
   return {
-    message: response.message,
+    message:   response.message,
     extracted: response.extracted,
-    complete: response.complete,
-    costUsd: response.costUsd,
+    complete:  response.complete,
+    costUsd:   response.costUsd,
   };
-}`} />
+}`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Streaming (for chat UIs)</h2>
-      <CodeBlock lang="typescript" filename="api/chat/route.ts" code={`import { TrueNorthEngine } from "truenorth";
+        <h2 className="sdk-h2">Streaming (for chat UIs)</h2>
+        <CodeBlock
+          lang="typescript"
+          filename="app/api/chat/route.ts"
+          code={`import { TrueNorthEngine } from "truenorth";
 import { StreamingTextResponse } from "ai";
 
 export async function POST(req: Request) {
   const { sessionId, message } = await req.json();
 
   const session = await engine.getOrCreateSession({ sessionId });
-  const stream = await session.stream(message);
+  const stream  = await session.stream(message);
 
   return new StreamingTextResponse(stream);
-}`} />
+}`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">TypeScript Types</h2>
-      <CodeBlock lang="typescript" code={`interface TurnResponse {
-  message: string;
-  extracted: Record<string, unknown>;
-  pending: string[];
-  complete: boolean;
-  costUsd: number;
-  stage: PipelineStage;
-  confidence: Record<string, number>;
+        <h2 className="sdk-h2">TypeScript Types</h2>
+        <CodeBlock
+          lang="typescript"
+          code={`interface TurnResponse {
+  message:        string;
+  extracted:      Record<string, unknown>;
+  pending:        string[];
+  complete:       boolean;
+  costUsd:        number;
+  stage:          PipelineStage;
+  confidence:     Record<string, number>;
   emotionValence: number;
 }
 
 interface SessionOutput {
   fields: Record<string, {
-    value: unknown;
+    value:      unknown;
     confidence: number;
     sourceTurn: number;
     sourceText: string;
   }>;
   totalCostUsd: number;
-  turns: number;
-  durationMs: number;
-  language: string;
+  turns:        number;
+  durationMs:   number;
+  language:     string;
 }
 
 type PipelineStage =
-  | "language_detection"
-  | "emotion_detection"
-  | "pii_detection"
-  | "conversation_planning"
-  | "field_extraction"
-  | "conflict_detection"
-  | "field_validation"
-  | "confidence_scoring"
-  | "hallucination_firewall"
-  | "output_generation"
-  | "source_tracing"
-  | "cost_recording"
-  | "mcp_tool_execution";`} />
+  | "language_detection"   | "emotion_detection"
+  | "pii_detection"        | "conversation_planning"
+  | "field_extraction"     | "conflict_detection"
+  | "field_validation"     | "confidence_scoring"
+  | "hallucination_firewall" | "output_generation"
+  | "source_tracing"       | "cost_recording"
+  | "mcp_tool_execution";`}
+        />
 
-      <div className="mt-12 flex items-center justify-between pt-6 border-t border-[#1E2329]">
-        <a href="/docs/sdks/python" className="text-sm text-[#8B95A3] hover:text-[#00D4AA] transition-colors">← Python SDK</a>
-        <a href="/docs/sdks/go" className="text-sm text-[#8B95A3] hover:text-[#00D4AA] transition-colors">Go SDK →</a>
-      </div>
-    </div>
+        <PageNav
+          prev={{ href: "/docs/sdks/python", label: "Python SDK" }}
+          next={{ href: "/docs/sdks/go",     label: "Go SDK" }}
+        />
+        <EditLink slug="nodejs" />
+      </article>
+    </>
   );
 }

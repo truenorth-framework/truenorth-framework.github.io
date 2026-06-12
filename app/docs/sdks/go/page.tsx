@@ -1,36 +1,39 @@
 import CodeBlock from "../../CodeBlock";
+import { Bc, EditLink, PageNav } from "../python/page";
+import SDK_CSS from "../sdk.css"
 
 export default function GoSDKPage() {
+  const COLOR = "#00ADD8";
+
   return (
-    <div className="prose-container max-w-none">
-      <nav className="text-xs text-[#4A5568] mb-6 flex items-center gap-2">
-        <a href="/docs" className="hover:text-[#00D4AA] transition-colors">Docs</a>
-        <span>/</span>
-        <a href="/docs/sdks" className="hover:text-[#00D4AA] transition-colors">SDKs</a>
-        <span>/</span>
-        <span className="text-[#00ADD8]">Go</span>
-      </nav>
+    <>
+      <style>{SDK_CSS}</style>
+      <article className="sdk-article">
+        <Bc lang="Go" langColor={COLOR} slug="go" />
 
-      <div className="flex items-center gap-3 mb-4">
-        <span className="text-xs px-2 py-1 rounded bg-[#00ADD8]/10 text-[#00ADD8] border border-[#00ADD8]/20 font-mono font-bold">GO</span>
-        <span className="text-xs text-[#4A5568]">High-performance · Production-ready</span>
-      </div>
+        <div className="sdk-tags">
+          <span className="sdk-tag" style={{ color: COLOR, background: COLOR+"0D", borderColor: COLOR+"30" }}>Go</span>
+          <span className="sdk-tag-plain">High-throughput · Goroutine-safe · Stable</span>
+        </div>
 
-      <h1 className="text-4xl font-bold text-[#F0F2F5] mb-4">Go SDK</h1>
-      <p className="text-[#8B95A3] text-lg mb-8 leading-relaxed">
-        The Go SDK is built for high-throughput production deployments. Supports concurrent sessions, context cancellation, and first-class goroutine safety. Requires Go 1.21+.
-      </p>
+        <h1 className="sdk-h1">Go SDK</h1>
+        <p className="sdk-lead">Built for high-throughput production deployments. Supports concurrent sessions, context cancellation, and first-class goroutine safety. Requires Go 1.21+.</p>
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4">Installation</h2>
-      <CodeBlock lang="bash" code={`go get github.com/amareshhebbar/truenorth-go`} />
+        <h2 className="sdk-h2">Installation</h2>
+        <CodeBlock lang="bash" code={`go get github.com/amareshhebbar/truenorth-go`} />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Initialize</h2>
-      <CodeBlock lang="go" filename="main.go" code={`package main
+        <h2 className="sdk-h2">Initialize</h2>
+        <CodeBlock
+          lang="go"
+          filename="main.go"
+          code={`package main
 
 import (
     "context"
     "fmt"
-    "github.com/amareshhebbar/truenorth-go"
+    "log"
+    "os"
+    truenorth "github.com/amareshhebbar/truenorth-go"
 )
 
 func main() {
@@ -43,10 +46,13 @@ func main() {
         log.Fatal(err)
     }
     defer engine.Close()
-}`} />
+}`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Session Management</h2>
-      <CodeBlock lang="go" code={`ctx := context.Background()
+        <h2 className="sdk-h2">Session Management</h2>
+        <CodeBlock
+          lang="go"
+          code={`ctx := context.Background()
 
 session, err := engine.CreateSession(ctx, truenorth.SessionConfig{
     YAMLPath:  "agents/medical_intake.yaml",
@@ -61,13 +67,16 @@ if err != nil {
     log.Fatal(err)
 }
 
-fmt.Println(resp.Message)   // "Thanks Priya! What is your primary goal?"
-fmt.Println(resp.Complete)  // false
-fmt.Printf("%.6f USD\\n", resp.CostUSD) // 0.000043 USD`} />
+fmt.Println(resp.Message)              // "Thanks Priya! What is your primary goal?"
+fmt.Println(resp.Complete)             // false
+fmt.Printf("%.6f USD\\n", resp.CostUSD) // 0.000043 USD`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">Concurrent Sessions</h2>
-      <CodeBlock lang="go" code={`// Engine is goroutine-safe — share across goroutines
-var wg sync.WaitGroup
+        <h2 className="sdk-h2">Concurrent Sessions</h2>
+        <p className="sdk-p">The engine is goroutine-safe — share a single instance across all goroutines.</p>
+        <CodeBlock
+          lang="go"
+          code={`var wg sync.WaitGroup
 results := make(chan *truenorth.SessionOutput, 100)
 
 for _, intake := range intakes {
@@ -90,10 +99,14 @@ for _, intake := range intakes {
 }
 
 wg.Wait()
-close(results)`} />
+close(results)`}
+        />
 
-      <h2 className="text-2xl font-bold text-[#F0F2F5] mb-4 mt-10">HTTP Handler Example</h2>
-      <CodeBlock lang="go" filename="handlers/chat.go" code={`func (h *Handler) Chat(w http.ResponseWriter, r *http.Request) {
+        <h2 className="sdk-h2">HTTP Handler</h2>
+        <CodeBlock
+          lang="go"
+          filename="handlers/chat.go"
+          code={`func (h *Handler) Chat(w http.ResponseWriter, r *http.Request) {
     var req struct {
         SessionID string \`json:"session_id"\`
         Message   string \`json:"message"\`
@@ -114,12 +127,15 @@ close(results)`} />
     }
 
     json.NewEncoder(w).Encode(resp)
-}`} />
+}`}
+        />
 
-      <div className="mt-12 flex items-center justify-between pt-6 border-t border-[#1E2329]">
-        <a href="/docs/sdks/nodejs" className="text-sm text-[#8B95A3] hover:text-[#00D4AA] transition-colors">← Node.js SDK</a>
-        <a href="/docs/sdks/expo" className="text-sm text-[#8B95A3] hover:text-[#00D4AA] transition-colors">Expo SDK →</a>
-      </div>
-    </div>
+        <PageNav
+          prev={{ href: "/docs/sdks/nodejs", label: "Node.js SDK" }}
+          next={{ href: "/docs/sdks/expo",   label: "Expo SDK" }}
+        />
+        <EditLink slug="go" />
+      </article>
+    </>
   );
 }
