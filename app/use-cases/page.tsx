@@ -246,12 +246,11 @@ export default function UseCasesPage() {
                 key={c.href}
                 href={c.href}
                 className="uci-card"
-                // @ts-ignore
-                style={{
-                  "--accent": c.accent,
-                  "--accent-dim": c.accentDim,
-                  "--accent-border": c.accentBorder,
-                }}
+              style={{
+            "--accent": c.accent,
+            "--accent-dim": c.accentDim,
+            "--accent-border": c.accentBorder,
+          } as React.CSSProperties}
               >
                 <div
                   className="uci-icon-box"
